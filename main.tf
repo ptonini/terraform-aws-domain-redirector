@@ -1,5 +1,6 @@
 module "certificate" {
-  source = "github.com/ptonini/terraform-aws-acm-certificate?ref=v1"
+  source = "ptonini/acm-certificate/aws"
+  version = "~> 1.0.0"
   domain_name = var.domains[0]
   subject_alternative_names = [for d in var.domains : d if index(var.domains, d) != 0]
   route53_zone = var.route53_zone
@@ -10,7 +11,8 @@ module "certificate" {
 }
 
 module "security_group" {
-  source = "github.com/ptonini/terraform-aws-security-group?ref=v1"
+  source = "ptonini/security-group/aws"
+  version = "~> 1.0.0"
   vpc = var.vpc
   builtin_ingress_rules = [
     "http",
@@ -30,7 +32,8 @@ module "security_group" {
 }
 
 module "load_balancer" {
-  source = "github.com/ptonini/terraform-aws-ec2-loadbalancer?ref=v1"
+  source = "ptonini/ec2-loadbalancer/aws"
+  version = "~> 1.0.0"
   subnet_ids = [for s in var.subnets : s["id"]]
   log_bucket_name = var.log_bucket_name
   security_group_ids = [
@@ -54,7 +57,8 @@ module "load_balancer" {
 }
 
 module "dns_record" {
-  source = "github.com/ptonini/terraform-aws-route53-record?ref=v1"
+  source = "ptonini/route53-record/aws"
+  version = "~> 1.0.0"
   for_each = toset(var.domains)
   name = each.value
   route53_zone = var.route53_zone
